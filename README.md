@@ -2,6 +2,12 @@
 
 Next.js 16 + Appwrite market intelligence dashboard for tracking a watchlist, portfolio, Indian market alerts, geopolitical alerts, filings, queue jobs, and Zerodha sync operations.
 
+![Next.js](https://img.shields.io/badge/Next.js%2016-000000?logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Appwrite](https://img.shields.io/badge/Appwrite-25.2.0-FD366E?logo=appwrite)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS%204-06B6D4?logo=tailwindcss&logoColor=white)
+![Sentry](https://img.shields.io/badge/Sentry-362D59?logo=sentry&logoColor=white)
+
 ## Highlights
 
 - Live dashboard at `/` with portfolio, watchlist, alerts, and queue summaries
@@ -11,7 +17,7 @@ Next.js 16 + Appwrite market intelligence dashboard for tracking a watchlist, po
 - Morning market brief
 - Admin screens for watchlist, jobs, and system operations
 - Protected job and sync endpoints for cron-driven workflows
-- Optional Discord publishing and Sentry observability
+- Optional Zerodha (Kite Connect) integration, Discord publishing, and Sentry observability
 
 ## Stack
 
@@ -20,7 +26,7 @@ Next.js 16 + Appwrite market intelligence dashboard for tracking a watchlist, po
 - TypeScript 6.0.3
 - Appwrite 25.2.0
 - Tailwind CSS 4
-- Zustand 5
+- Zustand 5 + TanStack Query 5
 - Zod 4
 - Axios, axios-retry, and rss-parser
 - `@sentry/nextjs`
@@ -69,6 +75,22 @@ The default collection names in `.env.example` are:
 - `portfolio_positions`
 
 The `APPWRITE_COLLECTION_*` environment variables already map to these names, so most setups can keep the defaults.
+
+## Project structure
+
+```
+├── public/          # Static assets
+├── src/
+│   ├── app/         # Next.js App Router pages and API routes
+│   ├── components/  # UI components (shadcn/ui + custom)
+│   ├── lib/         # Utility functions, cache keys, and shared logic
+│   ├── stores/      # Zustand stores
+│   └── ...
+├── sentry.*.config.ts   # Sentry client/server configuration
+├── instrumentation-client.ts
+├── vercel.json          # Vercel build config + scheduled cron
+└── .env.example         # Environment variable reference
+```
 
 ## Navigation
 
@@ -137,5 +159,5 @@ Keep `CRON_SECRET` configured in Vercel. Vercel sends it to the cron route as `A
 
 - The dashboard falls back to seed watchlist data when Appwrite is not configured.
 - Mutations and persistence require real Appwrite credentials and the collections above.
-- For deeper schema and migration details, see `CODEBASE_REPLICATION_GUIDE.md`.
+- For design decisions, see `DESIGN.md`.
 - The stale `/admin/zerodha-session` README reference has been removed; the UI lives at `/admin/system`, and token exchange happens at `/api/portfolio/zerodha/session`.
