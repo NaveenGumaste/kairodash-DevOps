@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+    --background: #fcfcfb;
+    --foreground: #1c1917;
+    --card: #ffffff;
+    --card-foreground: #1c1917;
+    --popover: #ffffff;
+    --popover-foreground: #1c1917;
+    --primary: #059669; /* emerald-600 */
+    --primary-foreground: #ffffff;
+    --secondary: #f5f5f4; /* stone-100 */
+    --secondary-foreground: #1c1917;
+    --muted: #f5f5f4;
+    --muted-foreground: #78716c; /* stone-500 */
+    --accent: #f5f5f4;
+    --accent-foreground: #1c1917;
+    --border: #e7e5e4; /* stone-200 */
+    --input: #e7e5e4;
+    --ring: #059669;
+
+    --sidebar-bg: #ffffff;
+    --sidebar-border: #e7e5e4;
+    --sidebar-text: #44403c;
+    --sidebar-hover: #f5f5f4;
+    --sidebar-active: #f0fdf4;
+    --sidebar-active-text: #047857;
+}
+
+.dark {
+    /* Obsidian dark with rich mossy/forest tint, no bluish grey */
+    --background: #090b0a;
+    --foreground: #f4f4f5;
+    --card: #111413;
+    --card-foreground: #f4f4f5;
+    --popover: #111413;
+    --popover-foreground: #f4f4f5;
+    --primary: #10b981; /* emerald-500 */
+    --primary-foreground: #022c22;
+    --secondary: #1a1e1b;
+    --secondary-foreground: #f4f4f5;
+    --muted: #1a1e1b;
+    --muted-foreground: #8a928e;
+    --accent: #1a1e1b;
+    --accent-foreground: #f4f4f5;
+    --border: #222724;
+    --input: #222724;
+    --ring: #10b981;
+
+    --sidebar-bg: #0c0e0d;
+    --sidebar-border: #222724;
+    --sidebar-text: #a1aba5;
+    --sidebar-hover: #171b19;
+    --sidebar-active: #064e3b;
+    --sidebar-active-text: #34d399;
+}
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-sidebar-bg: var(--sidebar-bg);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-text: var(--sidebar-text);
+    --color-sidebar-hover: var(--sidebar-hover);
+    --color-sidebar-active: var(--sidebar-active);
+    --color-sidebar-active-text: var(--sidebar-active-text);
+
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+}
+
+*,
+*::before,
+*::after {
+    transition-property:
+        color, background-color, border-color, text-decoration-color, fill,
+        stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+a {
+    text-underline-offset: 3px;
+}
+
+/* Hides the scrollbar track while keeping the element scrollable */
+.no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
