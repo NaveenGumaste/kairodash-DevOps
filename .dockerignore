@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.github
+.env
+.env.*
+!.env.example
+.vercel
+coverage
+*.log
+.DS_Store
+.vscode
+.idea
+terraform
+ansible
+docs
+scripts
