@@ -50,24 +50,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug AWS role variable
+      - name: Debug GitHub OIDC claims
         env:
-          ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
         run: |
-          echo "ROLE_ARN length: ${#ROLE_ARN}"
+          TOKEN_JSON=$(curl -s \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com")
 
-          if [[ -z "$ROLE_ARN" ]]; then
-            echo "ERROR: AWS_ROLE_ARN is empty"
-            exit 1
-          fi
+          ID_TOKEN=$(echo "$TOKEN_JSON" | jq -r '.value')
 
-          if [[ "$ROLE_ARN" == arn:aws:iam::*:role/* ]]; then
-            echo "ROLE_ARN format: VALID"
-          else
-            echo "ROLE_ARN format: INVALID"
-            echo "First characters: ${ROLE_ARN:0:12}"
-            exit 1
-          fi
+          PAYLOAD=$(echo "$ID_TOKEN" \
+            | cut -d '.' -f2 \
+            | tr '_-' '/+' \
+            | base64 -d 2>/dev/null)
+
+          echo "$PAYLOAD" | jq '{
+            repository,
+            repository_id,
+            repository_owner,
+            repository_owner_id,
+            ref,
+            event_name,
+            aud,
+            sub
+          }'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6.2.3
