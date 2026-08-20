@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "github_actions_trust" {
       variable = "token.actions.githubusercontent.com:sub"
 
       values = [
-        "repo:NaveenGumaste/kairodash-DevOps:ref:refs/heads/devops/initial-setup"
+        "repo:NaveenGumaste@64587607/kairodash-DevOps@1331818586:ref:refs/heads/devops/initial-setup"
       ]
     }
   }
