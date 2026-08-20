@@ -50,6 +50,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check AWS role configuration
+        env:
+          AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+        run: |
+          if [[ -z "$AWS_ROLE_ARN" ]]; then
+            echo "ERROR: AWS_ROLE_ARN GitHub variable is empty or unavailable."
+            exit 1
+          fi
+
+          if [[ "$AWS_ROLE_ARN" != arn:aws:iam::*:role/* ]]; then
+            echo "ERROR: AWS_ROLE_ARN is not a full AWS IAM role ARN."
+            exit 1
+          fi
+
+          echo "AWS_ROLE_ARN is configured as a full IAM role ARN."
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6.2.3
         with:
