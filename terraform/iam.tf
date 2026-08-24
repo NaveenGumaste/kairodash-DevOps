@@ -64,10 +64,14 @@ resource "aws_iam_role" "github_actions_ecr" {
 }
 
 # ============================================================
-# ECR Permissions
+# ECR + SSM Permissions for GitHub Actions
 # ============================================================
 
 data "aws_iam_policy_document" "github_actions_ecr" {
+  # ----------------------------------------------------------
+  # ECR Authentication
+  # ----------------------------------------------------------
+
   statement {
     sid    = "ECRAuthentication"
     effect = "Allow"
@@ -78,6 +82,10 @@ data "aws_iam_policy_document" "github_actions_ecr" {
 
     resources = ["*"]
   }
+
+  # ----------------------------------------------------------
+  # ECR Push
+  # ----------------------------------------------------------
 
   statement {
     sid    = "ECRPushKairoDash"
@@ -94,6 +102,39 @@ data "aws_iam_policy_document" "github_actions_ecr" {
     resources = [
       aws_ecr_repository.kairo.arn
     ]
+  }
+
+  # ----------------------------------------------------------
+  # SSM Deployment
+  # ----------------------------------------------------------
+
+  statement {
+    sid    = "SSMDeployKairoDash"
+    effect = "Allow"
+
+    actions = [
+      "ssm:SendCommand"
+    ]
+
+    resources = [
+      "arn:aws:ssm:ap-south-1::document/AWS-RunShellScript",
+      aws_instance.kairo.arn
+    ]
+  }
+
+  # ----------------------------------------------------------
+  # SSM Command Result
+  # ----------------------------------------------------------
+
+  statement {
+    sid    = "SSMCommandResult"
+    effect = "Allow"
+
+    actions = [
+      "ssm:GetCommandInvocation"
+    ]
+
+    resources = ["*"]
   }
 }
 

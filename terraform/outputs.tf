@@ -12,3 +12,8 @@ output "ecr_repository_arn" {
   description = "ECR repository ARN."
   value       = aws_ecr_repository.kairo.arn
 }
+
+output "ec2_instance_id" {
+  description = "KairoDash EC2 instance ID."
+  value       = aws_instance.kairo.id
+}

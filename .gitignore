@@ -18,7 +18,6 @@ crash.log
 crash.*.log
 terraform.tfvars
 *.tfplan
-# Terraform saved plans
 *tfplan*
 
 # testing

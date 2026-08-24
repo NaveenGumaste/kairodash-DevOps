@@ -263,6 +263,8 @@ resource "aws_instance" "kairo" {
     # Install the base packages required for administration.
     dnf install -y git
 
+    # Install and start the SSM agent (not bundled in minimal AL2023 AMIs).
+    dnf install -y amazon-ssm-agent
     systemctl enable amazon-ssm-agent
     systemctl start amazon-ssm-agent
   EOF
