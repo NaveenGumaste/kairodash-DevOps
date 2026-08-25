@@ -10,6 +10,8 @@ on:
     branches:
       - main
 
+  workflow_dispatch:
+
 permissions:
   contents: read
   id-token: write
@@ -49,20 +51,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      # ============================================================
-      # AWS OIDC
-      # ============================================================
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6.2.3
-        with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
-          allowed-account-ids: "307796195748"
-
-      - name: Verify AWS identity
-        run: aws sts get-caller-identity
 
       # ============================================================
       # Docker
@@ -119,8 +107,18 @@ jobs:
         run: docker rm -f kairodash-ci
 
       # ============================================================
-      # Amazon ECR
+      # AWS OIDC & Amazon ECR
       # ============================================================
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          allowed-account-ids: "307796195748"
+
+      - name: Verify AWS identity
+        run: aws sts get-caller-identity
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -152,7 +150,7 @@ jobs:
 
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6.2.3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
