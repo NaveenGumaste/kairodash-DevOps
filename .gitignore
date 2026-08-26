@@ -16,9 +16,12 @@
 *.tfstate.*
 crash.log
 crash.*.log
-terraform.tfvars
+*.tfvars
+*.tfvars.json
 *.tfplan
+tfplan
 *tfplan*
+.terraform.tfstate.lock.info
 
 # testing
 /coverage
