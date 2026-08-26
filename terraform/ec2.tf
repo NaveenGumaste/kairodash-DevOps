@@ -259,14 +259,14 @@ resource "aws_instance" "kairo" {
 
     dnf update -y
 
-    # Docker will be configured by Ansible.
-    # Install the base packages required for administration.
-    dnf install -y git
+    dnf install -y git docker amazon-ssm-agent
 
-    # Install and start the SSM agent (not bundled in minimal AL2023 AMIs).
-    dnf install -y amazon-ssm-agent
     systemctl enable amazon-ssm-agent
     systemctl start amazon-ssm-agent
+
+    systemctl enable docker
+    systemctl start docker
+    usermod -aG docker ec2-user
   EOF
 
   root_block_device {

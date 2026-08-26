@@ -175,42 +175,47 @@ jobs:
             --instance-ids "$INSTANCE_ID" \
             --document-name "AWS-RunShellScript" \
             --comment "Deploy KairoDash ${IMAGE_TAG}" \
+            --timeout-seconds 600 \
             --parameters 'commands=[
               "set -e",
+              "command -v docker",
               "aws ecr get-login-password --region '"$AWS_REGION"' | docker login --username AWS --password-stdin '"$ECR_REGISTRY"'",
               "docker pull '"$ECR_REGISTRY"'/'"$ECR_REPOSITORY"':'"$IMAGE_TAG"'",
               "docker rm -f kairodash 2>/dev/null || true",
               "docker run -d --name kairodash --restart unless-stopped -p 3000:3000 '"$ECR_REGISTRY"'/'"$ECR_REPOSITORY"':'"$IMAGE_TAG"'",
-              "sleep 5",
-              "curl --fail --silent http://127.0.0.1:3000/api/health"
+              "for i in $(seq 1 30); do if curl --fail --silent http://127.0.0.1:3000/api/health; then echo HEALTH_OK; exit 0; fi; echo waiting; sleep 2; done",
+              "echo HEALTH_FAIL",
+              "docker logs kairodash || true",
+              "exit 1"
             ]' \
             --query "Command.CommandId" \
             --output text)
 
           echo "SSM command: $COMMAND_ID"
 
+          set +e
           aws ssm wait command-executed \
             --region "$AWS_REGION" \
             --command-id "$COMMAND_ID" \
             --instance-id "$INSTANCE_ID"
+          WAIT_EXIT=$?
+          set -e
 
-          STATUS=$(aws ssm get-command-invocation \
+          INVOCATION=$(aws ssm get-command-invocation \
             --region "$AWS_REGION" \
             --command-id "$COMMAND_ID" \
             --instance-id "$INSTANCE_ID" \
-            --query "Status" \
-            --output text)
+            --query "{Status:Status,StdOut:StandardOutputContent,StdErr:StandardErrorContent}" \
+            --output json)
+
+          echo "$INVOCATION"
+
+          STATUS=$(echo "$INVOCATION" | jq -r '.Status')
 
           echo "Deployment status: $STATUS"
 
-          if [ "$STATUS" != "Success" ]; then
+          if [ "$WAIT_EXIT" -ne 0 ] || [ "$STATUS" != "Success" ]; then
             echo "Deployment failed."
-            aws ssm get-command-invocation \
-              --region "$AWS_REGION" \
-              --command-id "$COMMAND_ID" \
-              --instance-id "$INSTANCE_ID" \
-              --query "{Status:Status,StdOut:StandardOutputContent,StdErr:StandardErrorContent}" \
-              --output json
             exit 1
           fi
 
